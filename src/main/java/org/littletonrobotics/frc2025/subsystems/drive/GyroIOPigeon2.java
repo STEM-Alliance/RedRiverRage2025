@@ -5,9 +5,9 @@
 // license that can be found in the LICENSE file at
 // the root directory of this project.
 
-package frc.robot.subsystems.drive;
+package org.littletonrobotics.frc2025.subsystems.drive;
 
-import static frc.robot.subsystems.drive.DriveConstants.*;
+import static org.littletonrobotics.frc2025.subsystems.drive.DriveConstants.PigeonConstants;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
@@ -22,7 +22,7 @@ import java.util.Queue;
 
 /** IO implementation for Pigeon 2. */
 public class GyroIOPigeon2 implements GyroIO {
-  private final Pigeon2 pigeon = new Pigeon2(pigeonCanId);
+  private final Pigeon2 pigeon = new Pigeon2(PigeonConstants.id, "*");
   private final StatusSignal<Angle> yaw = pigeon.getYaw();
   private final Queue<Double> yawPositionQueue;
   private final Queue<Double> yawTimestampQueue;
@@ -31,11 +31,11 @@ public class GyroIOPigeon2 implements GyroIO {
   public GyroIOPigeon2() {
     pigeon.getConfigurator().apply(new Pigeon2Configuration());
     pigeon.getConfigurator().setYaw(0.0);
-    yaw.setUpdateFrequency(odometryFrequency);
+    yaw.setUpdateFrequency(DriveConstants.odometryFrequency);
     yawVelocity.setUpdateFrequency(50.0);
     pigeon.optimizeBusUtilization();
-    yawTimestampQueue = SparkOdometryThread.getInstance().makeTimestampQueue();
-    yawPositionQueue = SparkOdometryThread.getInstance().registerSignal(yaw::getValueAsDouble);
+    yawTimestampQueue = PhoenixOdometryThread.getInstance().makeTimestampQueue();
+    yawPositionQueue = PhoenixOdometryThread.getInstance().registerSignal(pigeon.getYaw());
   }
 
   @Override
@@ -47,9 +47,7 @@ public class GyroIOPigeon2 implements GyroIO {
     inputs.odometryYawTimestamps =
         yawTimestampQueue.stream().mapToDouble((Double value) -> value).toArray();
     inputs.odometryYawPositions =
-        yawPositionQueue.stream()
-            .map((Double value) -> Rotation2d.fromDegrees(value))
-            .toArray(Rotation2d[]::new);
+        yawPositionQueue.stream().map(Rotation2d::fromDegrees).toArray(Rotation2d[]::new);
     yawTimestampQueue.clear();
     yawPositionQueue.clear();
   }

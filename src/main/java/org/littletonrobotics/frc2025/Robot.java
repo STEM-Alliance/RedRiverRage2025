@@ -5,8 +5,9 @@
 // license that can be found in the LICENSE file at
 // the root directory of this project.
 
-package frc.robot;
+package org.littletonrobotics.frc2025;
 
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -16,14 +17,7 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-import org.littletonrobotics.urcl.URCL;
 
-/**
- * The VM is configured to automatically run this class, and to call the functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the name of this class or
- * the package after creating this project, you must also update the build.gradle file in the
- * project.
- */
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private RobotContainer robotContainer;
@@ -48,7 +42,7 @@ public class Robot extends LoggedRobot {
     }
 
     // Set up data receivers & replay source
-    switch (Constants.currentMode) {
+    switch (Constants.getMode()) {
       case REAL:
         // Running on a real robot, log to a USB stick ("/U/logs")
         Logger.addDataReceiver(new WPILOGWriter());
@@ -69,14 +63,13 @@ public class Robot extends LoggedRobot {
         break;
     }
 
-    // Initialize URCL
-    Logger.registerURCL(URCL.startExternal());
-
     // Start AdvantageKit logger
     Logger.start();
 
-    // Instantiate our RobotContainer. This will perform all our button bindings,
-    // and put our autonomous chooser on the dashboard.
+    // Configure brownout voltage
+    RobotController.setBrownoutVoltage(6.0);
+
+    // Create RobotConatiner
     robotContainer = new RobotContainer();
   }
 
@@ -86,11 +79,7 @@ public class Robot extends LoggedRobot {
     // Switch thread to high priority to improve loop timing
     Threads.setCurrentThreadPriority(true, 99);
 
-    // Runs the Scheduler. This is responsible for polling buttons, adding
-    // newly-scheduled commands, running already-scheduled commands, removing
-    // finished or interrupted commands, and running subsystem periodic() methods.
-    // This must be called from the robot's periodic block in order for anything in
-    // the Command-based framework to work.
+    // Run command scheduler
     CommandScheduler.getInstance().run();
 
     // Return to normal thread priority
@@ -110,7 +99,6 @@ public class Robot extends LoggedRobot {
   public void autonomousInit() {
     autonomousCommand = robotContainer.getAutonomousCommand();
 
-    // schedule the autonomous command (example)
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
     }
@@ -123,10 +111,6 @@ public class Robot extends LoggedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
@@ -138,10 +122,7 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once when test mode is enabled. */
   @Override
-  public void testInit() {
-    // Cancels all running commands at the start of test mode.
-    CommandScheduler.getInstance().cancelAll();
-  }
+  public void testInit() {}
 
   /** This function is called periodically during test mode. */
   @Override
