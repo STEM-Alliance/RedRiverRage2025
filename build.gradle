@@ -134,7 +134,7 @@ tasks.withType(JavaCompile) {
 
 // Check robot type when deploying
 task(checkRobot, dependsOn: "classes", type: JavaExec) {
-    main = "org.littletonrobotics.frc2025.Constants"
+    main = "frc.robot.Constants"
     classpath = sourceSets.main.runtimeClasspath
 }
 deployroborio.dependsOn(checkRobot)
@@ -143,10 +143,10 @@ deployroborio.dependsOn(checkRobot)
 project.compileJava.dependsOn(createVersionFile)
 gversion {
     srcDir       = "src/main/java/"
-    classPackage = "org.littletonrobotics.frc2025"
+    classPackage = "frc.robot"
     className    = "BuildConstants"
     dateFormat   = "yyyy-MM-dd HH:mm:ss z"
-    timeZone     = "America/New_York"
+    timeZone     = "America/Chicago"
     indent       = "  "
 }
 
