@@ -11,7 +11,7 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
-def ROBOT_MAIN_CLASS = "org.littletonrobotics.frc2025.Main"
+def ROBOT_MAIN_CLASS = "frc.robot.Main"
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project DeployUtils.
@@ -62,7 +62,7 @@ def includeDesktopSupport = true
 
 // Configuration for AdvantageKit
 task(replayWatch, type: JavaExec) {
-    mainClass = "org.littletonrobotics.junction.ReplayWatch"
+    mainClass = "frc.robot.junction.ReplayWatch"
     classpath = sourceSets.main.runtimeClasspath
 }
 
@@ -189,7 +189,7 @@ spotless {
     java {
         target fileTree(".") {
             include "src/**/*.java"
-            exclude "**/build/**", "**/build-*/**", "src/main/java/org/littletonrobotics/frc2025/BuildConstants.java"
+            exclude "**/build/**", "**/build-*/**", "src/main/java/frc/robot/BuildConstants.java"
         }
         toggleOffOn()
         googleJavaFormat()
