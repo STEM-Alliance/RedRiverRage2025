@@ -133,11 +133,11 @@ tasks.withType(JavaCompile) {
 }
 
 // Check robot type when deploying
-task(checkRobot, dependsOn: "classes", type: JavaExec) {
-    main = "frc.robot.Constants"
-    classpath = sourceSets.main.runtimeClasspath
-}
-deployroborio.dependsOn(checkRobot)
+// task(checkRobot, dependsOn: "classes", type: JavaExec) {
+//     main = "frc.robot.Constants"
+//     classpath = sourceSets.main.runtimeClasspath
+// }
+// deployroborio.dependsOn(checkRobot)
 
 // Create version file
 project.compileJava.dependsOn(createVersionFile)
